@@ -1,0 +1,29 @@
+---
+Language: Cpp
+BasedOnStyle: Mozilla
+IndentWidth: 4
+ContinuationIndentWidth: 4
+
+AlignAfterOpenBracket: AlwaysBreak
+AlignTrailingComments: false
+NamespaceIndentation: None
+# TODO: enable this (may cause a significant diff...)
+BreakBeforeBraces: Custom
+BraceWrapping:
+    AfterCaseLabel: false
+    AfterClass: true
+    AfterControlStatement: false
+    AfterEnum: true
+    AfterFunction: true
+    AfterNamespace: true
+    AfterStruct: true
+    AfterUnion: true
+    BeforeCatch: true
+    BeforeElse: false
+    IndentBraces: false
+    SplitEmptyFunction: false
+    SplitEmptyRecord: false
+    SplitEmptyNamespace: false
+
+    AfterExternBlock: false
+...

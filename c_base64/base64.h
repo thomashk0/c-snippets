@@ -62,10 +62,11 @@ extern "C" {
 ///     If this function succeeds, it returns the a positive number
 ///     representing the number of bytes written in \p dst. If the destination
 ///     buffer is too small, this function does nothing and return -1.
-C_BASE64_API long b64_encode_into(char* dst, long dst_capacity, const char* src,
-                                  long src_len);
+C_BASE64_API long
+b64_encode_into(char* dst, long dst_capacity, const char* src, long src_len);
 
-C_BASE64_API char* b64_encode(long* out_len, const char* src, long src_len);
+C_BASE64_API char*
+b64_encode(long* out_len, const char* src, long src_len);
 
 /// Convert a base64 string to to raw bytes.
 ///
@@ -79,16 +80,17 @@ C_BASE64_API char* b64_encode(long* out_len, const char* src, long src_len);
 ///     If this function succeeds, it returns the a positive number
 ///     representing the number of bytes written in \p dst. If the destination
 ///     buffer is too small, this function does nothing and return -1.
-C_BASE64_API long b64_decode_into(char* dst, long dst_capacity, const char* src,
-                                  long src_len);
+C_BASE64_API long
+b64_decode_into(char* dst, long dst_capacity, const char* src, long src_len);
 
-C_BASE64_API char* b64_decode(long* out_len, const char* src, long src_len);
+C_BASE64_API char*
+b64_decode(long* out_len, const char* src, long src_len);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif  // ifndef C_BASE64_H
+#endif // ifndef C_BASE64_H
 
 #ifdef C_BASE64_IMPL
 
@@ -113,18 +115,18 @@ C_BASE64_API char* b64_decode(long* out_len, const char* src, long src_len);
 #define C_BASE64_FREE(ptr) free(ptr)
 #endif
 
-#define C_BASE64_CHECK_I(prop) \
-    do {                       \
-        if (!(prop)) {         \
-            return -1;         \
-        }                      \
+#define C_BASE64_CHECK_I(prop)                                                 \
+    do {                                                                       \
+        if (!(prop)) {                                                         \
+            return -1;                                                         \
+        }                                                                      \
     } while (0)
 
-#define C_BASE64_CHECK_P(prop) \
-    do {                       \
-        if (!(prop)) {         \
-            return NULL;       \
-        }                      \
+#define C_BASE64_CHECK_P(prop)                                                 \
+    do {                                                                       \
+        if (!(prop)) {                                                         \
+            return NULL;                                                       \
+        }                                                                      \
     } while (0)
 
 /* clang-format off */
@@ -153,7 +155,9 @@ static const char b64_inv[256] = {
 
 typedef unsigned char u8;
 
-static void b64_encode_raw(char* dst, const char* src, long src_len) {
+static void
+b64_encode_raw(char* dst, const char* src, long src_len)
+{
     long remaining = src_len;
     const u8* u_src = (const u8*)src;
     while (remaining >= 3) {
@@ -171,7 +175,7 @@ static void b64_encode_raw(char* dst, const char* src, long src_len) {
             dst[1] = b64_table[(u_src[0] & 0x03) << 4];
             dst[2] = '=';
             dst[3] = '=';
-        } else {  // remaining == 2
+        } else { // remaining == 2
             dst[1] = b64_table[((u_src[0] & 0x03) << 4) + (u_src[1] >> 4)];
             dst[2] = b64_table[(u_src[1] & 0x0f) << 2];
             dst[3] = '=';
@@ -179,22 +183,27 @@ static void b64_encode_raw(char* dst, const char* src, long src_len) {
     }
 }
 
-long b64_encode_into(char* dst, long dst_capacity, const char* src,
-                     long src_len) {
+long
+b64_encode_into(char* dst, long dst_capacity, const char* src, long src_len)
+{
     C_BASE64_CHECK_I(dst != NULL);
     C_BASE64_CHECK_I(src != NULL);
     C_BASE64_CHECK_I(src_len >= 0);
     long dst_len = b64_repr_len(src_len);
     if (dst_len > dst_capacity) {
-        C_BASE64_LOG_ERR("dst_capacity is too small (%l, should be >= %l)",
-                         dst_capacity, dst_len);
+        C_BASE64_LOG_ERR(
+            "dst_capacity is too small (%l, should be >= %l)",
+            dst_capacity,
+            dst_len);
         return -1;
     }
     b64_encode_raw(dst, src, src_len);
     return dst_len;
 }
 
-char* b64_encode(long* out_len, const char* src, long src_len) {
+char*
+b64_encode(long* out_len, const char* src, long src_len)
+{
     C_BASE64_CHECK_P(src_len >= 0);
     // Add a trailing '\0' character.
     long b64_len = b64_repr_len(src_len) + 1;
@@ -207,15 +216,17 @@ char* b64_encode(long* out_len, const char* src, long src_len) {
         free(dst);
         return NULL;
     }
-    dst[b64_len - 1] = 0;
+    dst[res] = 0;
     if (out_len) {
-        *out_len = b64_len;
+        *out_len = res;
     }
     return dst;
 }
 
 // Internal helper
-static int b64_inverse_block(u8* dst, size_t dst_len, const char* src) {
+static int
+b64_inverse_block(u8* dst, size_t dst_len, const char* src)
+{
     assert(dst_len <= 4);
     for (size_t i = 0; i < dst_len; i++) {
         char c = b64_inv[(u8)src[i]];
@@ -227,15 +238,18 @@ static int b64_inverse_block(u8* dst, size_t dst_len, const char* src) {
     return 0;
 }
 
-long b64_decode_into(char* dst, long dst_capacity, const char* src,
-                     long src_len) {
+long
+b64_decode_into(char* dst, long dst_capacity, const char* src, long src_len)
+{
     C_BASE64_CHECK_I(dst != NULL);
     C_BASE64_CHECK_I(src != NULL);
     C_BASE64_CHECK_I(src_len >= 0);
     long dst_len_max = byte_repr_len(src_len);
     if (dst_len_max > dst_capacity) {
-        C_BASE64_LOG_ERR("dst_capacity is too small (%l, should be >= %l)",
-                         dst_capacity, dst_len);
+        C_BASE64_LOG_ERR(
+            "dst_capacity is too small (%l, should be >= %l)",
+            dst_capacity,
+            dst_len);
         return -1;
     }
 
@@ -264,7 +278,7 @@ long b64_decode_into(char* dst, long dst_capacity, const char* src,
     }
 
     // We zero-initalize the inverse (this is important).
-    u8 isrc[4] = {0};
+    u8 isrc[4] = { 0 };
     if (b64_inverse_block(isrc, remaining, src) == -1) {
         // error -> invalid base64 character.
         return -1;
@@ -281,7 +295,9 @@ long b64_decode_into(char* dst, long dst_capacity, const char* src,
     return dst_len_max - pad_len;
 }
 
-char* b64_decode(long* out_len, const char* src, long src_len) {
+char*
+b64_decode(long* out_len, const char* src, long src_len)
+{
     long dst_len = byte_repr_len(src_len) + 1;
     char* dst = (char*)C_BASE64_MALLOC(dst_len);
     if (dst == NULL) {
@@ -300,4 +316,4 @@ char* b64_decode(long* out_len, const char* src, long src_len) {
     }
     return dst;
 }
-#endif  // ifdef C_BASE64_IMPL
+#endif // ifdef C_BASE64_IMPL
