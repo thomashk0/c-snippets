@@ -63,7 +63,11 @@ extern "C" {
 ///     representing the number of bytes written in \p dst. If the destination
 ///     buffer is too small, this function does nothing and return -1.
 C_BASE64_API long
-b64_encode_into(char* dst, long dst_capacity, const char* src, long src_len);
+b64_encode_into(
+    char* restrict dst,
+    long dst_capacity,
+    const char* restrict src,
+    long src_len);
 
 C_BASE64_API char*
 b64_encode(long* out_len, const char* src, long src_len);
@@ -81,7 +85,11 @@ b64_encode(long* out_len, const char* src, long src_len);
 ///     representing the number of bytes written in \p dst. If the destination
 ///     buffer is too small, this function does nothing and return -1.
 C_BASE64_API long
-b64_decode_into(char* dst, long dst_capacity, const char* src, long src_len);
+b64_decode_into(
+    char* restrict dst,
+    long dst_capacity,
+    const char* restrict src,
+    long src_len);
 
 C_BASE64_API char*
 b64_decode(long* out_len, const char* src, long src_len);
@@ -184,7 +192,11 @@ b64_encode_raw(char* dst, const char* src, long src_len)
 }
 
 long
-b64_encode_into(char* dst, long dst_capacity, const char* src, long src_len)
+b64_encode_into(
+    char* restrict dst,
+    long dst_capacity,
+    const char* restrict src,
+    long src_len)
 {
     C_BASE64_CHECK_I(dst != NULL);
     C_BASE64_CHECK_I(src != NULL);
@@ -239,7 +251,11 @@ b64_inverse_block(u8* dst, size_t dst_len, const char* src)
 }
 
 long
-b64_decode_into(char* dst, long dst_capacity, const char* src, long src_len)
+b64_decode_into(
+    char* restrict dst,
+    long dst_capacity,
+    const char* restrict src,
+    long src_len)
 {
     C_BASE64_CHECK_I(dst != NULL);
     C_BASE64_CHECK_I(src != NULL);

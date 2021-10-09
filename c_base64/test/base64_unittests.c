@@ -111,11 +111,11 @@ UTEST(base64, b64_decode)
 UTEST(base64, b64_decode_invalid)
 {
     const char* invalid_inputs[] = {
-        ".", "a-", "ab+", "ab=12", "ab__12", "&>b__12", "&<>b__12",
+        ".", "a-", "ab%", "ab=12", "ab__12", "&>b__12", "&<>b__12",
     };
     for (int i = 0; i < (int)COUNTOF(invalid_inputs); i++) {
         const char* s = invalid_inputs[i];
-        printf("testing: '%s'\n", s);
+        // printf("testing: '%s'\n", s);
         ASSERT_TRUE(b64_decode(NULL, s, strlen(s)) == NULL);
     }
 }
