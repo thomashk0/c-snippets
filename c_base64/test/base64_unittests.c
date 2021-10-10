@@ -48,6 +48,9 @@ UTEST(base64, b64_encode)
     ASSERT_TRUE(b64_encode(&p, s, -1) == NULL);
     ASSERT_EQ(p, 0);
 
+    // Source pointer is NULL
+    ASSERT_TRUE(b64_encode(&p, NULL, 10) == NULL);
+
     {
         scoped_ptr char* s_b64 = b64_encode(&p, s, 0);
         ASSERT_TRUE(s_b64 != NULL);
