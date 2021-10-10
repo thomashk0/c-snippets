@@ -54,14 +54,16 @@ extern "C" {
 /// \param dst Destination buffer, where to write base 64 representation.
 /// \param dst_capacity
 ///     The maximum number of bytes that can be written
-///     in \p dst.
+///     in \p dst. You can use the \p b64_repr_len macro to compute the size
+///     needed for the destination bufer.
 /// \param src Source buffer (raw bytes).
 /// \param src_len Length of the source buffer.
 ///
 /// \return
 ///     If this function succeeds, it returns the a positive number
 ///     representing the number of bytes written in \p dst. If the destination
-///     buffer is too small, this function does nothing and return -1.
+///     buffer is too small or some parameters are invalid, this function does
+///     nothing and return -1.
 C_BASE64_API long
 b64_encode_into(
     char* restrict dst,
@@ -69,6 +71,17 @@ b64_encode_into(
     const char* restrict src,
     long src_len);
 
+/// Convert bytes into a zero-terminated base64 string.
+///
+/// \param out_len if not NULL, the size of the returned string (excluding the
+/// zero terminator) is written to this pointer.
+///
+/// \return
+///     On success, returns a pointer to a zero-terminated string. This string
+///     is allocated with C_BASE64_MALLOC (which defaults to malloc for
+///     stdlib.h). The caller takes ownership of this string and must free it.
+///
+///     On error, this function returns NULL.
 C_BASE64_API char*
 b64_encode(long* out_len, const char* src, long src_len);
 
@@ -76,7 +89,10 @@ b64_encode(long* out_len, const char* src, long src_len);
 ///
 /// \param dst Destination buffer, where to write the byte representation.
 /// \param dst_capacity
-///     The maximum number of bytes that can be written in \p dst.
+///     The maximum number of bytes that can be written in \p dst. You can
+///     use the \p byte_repr_len macro to compute an upper bound of the size.
+///     Please note that due to padding, fewer bytes can actually be written.
+///     Make sure you check the size returned
 /// \param src Source buffer (base64 representation).
 /// \param src_len Length of the source buffer.
 ///
@@ -91,6 +107,17 @@ b64_decode_into(
     const char* restrict src,
     long src_len);
 
+/// Convert a base64 string into a zero-terminated byte string.
+///
+/// \param out_len if not NULL, the size of the returned string (excluding the
+/// zero terminator) is written to this pointer.
+///
+/// \return
+///     On success, returns a pointer to a zero-terminated string. This string
+///     is allocated with C_BASE64_MALLOC (which defaults to malloc for
+///     stdlib.h). The caller takes ownership of this string and must free it.
+///
+///     On error, this function returns NULL.
 C_BASE64_API char*
 b64_decode(long* out_len, const char* src, long src_len);
 
