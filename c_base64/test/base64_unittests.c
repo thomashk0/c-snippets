@@ -2,6 +2,11 @@
 #include "../base64.h"
 #include "utest.h"
 
+#ifdef ENABLE_LIBFIU
+#include <fiu-control.h>
+#include <fiu.h>
+#endif
+
 #define COUNTOF(array) (sizeof(array) / sizeof(array[0]))
 
 #define scoped_ptr __attribute__((cleanup(cleanup_free)))
@@ -56,6 +61,15 @@ UTEST(base64, b64_encode)
         ASSERT_EQ(p, 16);
         ASSERT_STREQ(s_b64, "XzEwMjgrKiovLw==");
     }
+
+#ifdef ENABLE_LIBFIU
+    {
+        fiu_enable("libc/mm/malloc", 1, NULL, 0);
+        scoped_ptr char* s_b64 = b64_encode(&p, s, s_len);
+        fiu_disable("libc/mm/malloc");
+        ASSERT_TRUE(s_b64 == NULL);
+    }
+#endif
 }
 
 UTEST(base64, b64_decode_into)
@@ -106,6 +120,15 @@ UTEST(base64, b64_decode)
         ASSERT_EQ(len, 7);
         ASSERT_STREQ(s_origin, "example");
     }
+
+#ifdef ENABLE_LIBFIU
+    {
+        fiu_enable("libc/mm/malloc", 1, NULL, 0);
+        scoped_ptr char* p = b64_decode(&len, s, s_len);
+        fiu_disable("libc/mm/malloc");
+        ASSERT_TRUE(p == NULL);
+    }
+#endif
 }
 
 UTEST(base64, b64_decode_invalid)
@@ -177,4 +200,14 @@ UTEST(base64, b64_test_vectors)
     /* clang-format on */
 }
 
-UTEST_MAIN()
+UTEST_STATE();
+
+int
+main(int argc, const char* const argv[])
+{
+#ifdef ENABLE_LIBFIU
+    fiu_init(0);
+#endif
+
+    return utest_main(argc, argv);
+}
