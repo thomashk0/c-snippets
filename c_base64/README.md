@@ -18,11 +18,23 @@ Customizable macros (must be declared before the `#include "base64.h"`):
 
 ## Developper guide
 
+To run all tests, you need to install `libfiu` (e.g., `sudo apt install libfiu-dev`).
+We also recommend using clang (which will allow tests with fuzzing), remove the `CC=clang` to use gcc or you default compiler.
+
 Go in the `test` subdirectory:
 ```console
-$ meson build
+$ CC=clang meson build
 $ cd build
 $ ninja test
+```
+
+### Generate coverage report
+
+```console
+$ CC=clang meson -Db_coverage=true build-cov
+$ cd build-cov
+$ lcov --capture --directory . --output-file coverage.info
+$ genhtml -o html coverage.info
 ```
 
 ## License
