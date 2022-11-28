@@ -8,3 +8,4 @@ The license can differ for each library. Please, refer to the `LICENSE` files in
 ## Index of Libraries
 
 * [c_base64](./c_base64): base64 encoding and decoding.
+* [survival](./survival/): some survival macros, always nice to include in C projects!
